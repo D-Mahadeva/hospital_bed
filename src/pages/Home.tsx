@@ -1,9 +1,22 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { apiService } from "@/services/api";
 
 const Home = () => {
   const navigate = useNavigate();
+
+  const initializeAndNavigate = async () => {
+    try {
+      await apiService.initSampleData();
+      toast.success("Sample data initialized successfully!");
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast.info("Data already exists, proceeding to dashboard");
+      navigate("/dashboard");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-radial flex items-center justify-center relative overflow-hidden">
@@ -17,8 +30,8 @@ const Home = () => {
             animate={{
               opacity: [0, 1, 0],
               scale: [0, 1, 0],
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
             }}
             transition={{
               duration: 3 + Math.random() * 2,
@@ -51,23 +64,40 @@ const Home = () => {
           </motion.span>
         </motion.h1>
 
+        <motion.p
+          className="text-xl md:text-2xl text-white/80 mb-12 max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          Advanced Hospital Management System
+          <br />
+          Real-time Patient & Bed Monitoring
+        </motion.p>
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
+          className="space-y-4"
         >
           <Button
-            onClick={() => navigate("/login")}
+            onClick={initializeAndNavigate}
             className="glass px-8 py-4 text-lg font-semibold text-white border border-white/20 rounded-2xl hover:scale-105 hover:shadow-glow transition-all duration-300 backdrop-blur-md"
             variant="ghost"
+            size="lg"
           >
             <motion.span
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Login
+              Enter Dashboard
             </motion.span>
           </Button>
+
+          <div className="text-white/60 text-sm">
+            Click to initialize sample data and enter the hospital dashboard
+          </div>
         </motion.div>
       </div>
 
